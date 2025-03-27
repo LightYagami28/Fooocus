@@ -2,23 +2,25 @@
 
 import numpy as np
 from PIL import Image
-
 from extras.inpaint_mask import SAMOptions, generate_mask_from_image
 
-original_image = Image.open('cat.webp')
-image = np.array(original_image, dtype=np.uint8)
+# Load image safely using a context manager
+with Image.open("cat.webp") as original_image:
+    image = np.asarray(original_image, dtype=np.uint8)
 
+# Configure SAM options
 sam_options = SAMOptions(
-    dino_prompt='eye',
+    dino_prompt="eye",
     dino_box_threshold=0.3,
     dino_text_threshold=0.25,
     dino_erode_or_dilate=0,
     dino_debug=False,
     max_detections=2,
-    model_type='vit_b'
+    model_type="vit_b",
 )
 
-mask_image, _, _, _ = generate_mask_from_image(image, sam_options=sam_options)
+# Generate the mask
+mask_image, *_ = generate_mask_from_image(image, sam_options=sam_options)
 
-merged_masks_img = Image.fromarray(mask_image)
-merged_masks_img.show()
+# Convert and display the mask
+Image.fromarray(mask_image).show()
